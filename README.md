@@ -47,36 +47,47 @@ Travel agency is the service that acts as the service orchestration initiator. T
 
 ### Create the project structure
 
-Ballerina is a complete programming language that supports custom project structures. Use the following module structure
- for this guide.
+Let's create the following project structure for this guide.
 
 ```
 parallel-service-orchestration
-   └── guide
-       ├── airline_reservation
-       │   ├── airline_reservation_service.bal
-       │   └── tests
-       │       └── airline_reservation_service_test.bal
-       ├── car_rental
-       │   ├── car_rental_service.bal
-       │   └── tests
-       │       └── car_rental_service_test.bal
-       ├── hotel_reservation
-       │   ├── hotel_reservation_service.bal
-       │   └── tests
-       │       └── hotel_reservation_service_test.bal
-       ├── travel_agency
-       │   └── travel_agency_service_parallel.bal
-       └── tests
-           └── travel_agency_service_parallel_test.bal
+└── guide
+    ├── Ballerina.toml
+    └── src
+        ├── airline_reservation
+        │   ├── airline_reservation_service.bal
+        │   └── tests
+        │       └── airline_reservation_service_test.bal
+        ├── car_rental
+        │   ├── car_rental_service.bal
+        │   └── tests
+        │       └── car_rental_service_test.bal
+        ├── hotel_reservation
+        │   ├── hotel_reservation_service.bal
+        │   └── tests
+        │       └── hotel_reservation_service_test.bal
+        └── travel_agency
+            ├── ballerina.conf
+            ├── tests
+            │   └── travel_agency_service_parallel_test.bal
+            └── travel_agency_service_parallel.bal
 ```
 
-- Create the above directories in your local machine and also create empty `.bal` files.
+- To create the basic project structure run the following command.
 
-- Then open the terminal and navigate to `parallel-service-orchestration/guide` and run Ballerina project initializing toolkit.
 ```bash
-   $ ballerina init
+   $ ballerina create guide
 ```
+
+Now, navigate to `guide` directory and run the following command to create the new module `airline_reservation`.
+
+```bash
+    $ ballerina create airline_reservation
+```
+
+Now, add the `airline_reservation_service.bal` and `airline_reservation_service_test.bal` files in place of `main.bal` and `main_test.bal` which get created as a part of the generic project template.
+
+Repeat the same steps to create `car_rental`, `hotel_reservation` and `travel_agency` services.
 
 ### Developing the service
 
@@ -141,7 +152,7 @@ fork {
     worker qatarWorker returns http:Response? {
         http:Request outReq = new;
         // Out request payload
-        outReq.setJsonPayload(untaint flightPayload);
+        outReq.setJsonPayload(<@untainted>flightPayload);
         // Send a POST request to 'Qatar Airways' and get the results
         var respWorkerQuatar = airlineEP->post("/qatarAirways", outReq);
         // Reply to the join block from this worker - Send the response from 'Qatar Airways'
@@ -155,7 +166,7 @@ fork {
     worker asianaWorker returns http:Response? {
         http:Request outReq = new;
         // Out request payload
-        outReq.setJsonPayload(untaint flightPayload);
+        outReq.setJsonPayload(<@untainted>flightPayload);
         // Send a POST request to 'Asiana' and get the results
         var respWorkerAsiana = airlineEP->post("/asiana", outReq);
         // Reply to the join block from this worker - Send the response from 'Asiana'
@@ -169,7 +180,7 @@ fork {
     worker emiratesWorker returns http:Response? {
         http:Request outReq = new;
         // Out request payload
-        outReq.setJsonPayload(untaint flightPayload);
+        outReq.setJsonPayload(<@untainted>flightPayload);
         // Send a POST request to 'Emirates' and get the results
         var respWorkerEmirates = airlineEP->post("/emirates", outReq);
         // Reply to the join block from this worker - Send the response from 'Emirates'
@@ -181,7 +192,7 @@ fork {
 }
 
 // Wait until the responses received from all the workers running in parallel
-record{
+record {
     http:Response? qatarWorker;
     http:Response? asianaWorker;
     http:Response? emiratesWorker;
@@ -194,7 +205,7 @@ int emiratesPrice = -1;
 // Get the response and price for airline 'Qatar Airways'
 var resQatar = airlineResponses["qatarWorker"];
 if (resQatar is http:Response) {
-    var flightResponseQutar= resQatar.getJsonPayload();
+    var flightResponseQutar = resQatar.getJsonPayload();
     if (flightResponseQutar is json) {
         jsonFlightResponseQatar = flightResponseQutar;
         var qatarResult = jsonFlightResponseQatar.Price;
@@ -257,7 +268,7 @@ fork {
     worker miramar returns http:Response? {
         http:Request outReq = new;
         // Out request payload
-        outReq.setJsonPayload(untaint hotelPayload);
+        outReq.setJsonPayload(<@untainted>hotelPayload);
         // Send a POST request to 'Asiana' and get the results
         var respWorkerMiramar = hotelEP->post("/miramar", outReq);
         // Reply to the join block from this worker - Send the response from 'Asiana'
@@ -271,7 +282,7 @@ fork {
     worker aqueen returns http:Response? {
         http:Request outReq = new;
         // Out request payload
-        outReq.setJsonPayload(untaint hotelPayload);
+        outReq.setJsonPayload(<@untainted>hotelPayload);
         // Send a POST request to 'Aqueen' and get the results
         var respWorkerAqueen = hotelEP->post("/aqueen", outReq);
         // Reply to the join block from this worker - Send the response from 'Aqueen'
@@ -285,7 +296,7 @@ fork {
     worker elizabeth returns http:Response? {
         http:Request outReq = new;
         // Out request payload
-        outReq.setJsonPayload(untaint hotelPayload);
+        outReq.setJsonPayload(<@untainted>hotelPayload);
         // Send a POST request to 'Elizabeth' and get the results
         var respWorkerElizabeth = hotelEP->post("/elizabeth", outReq);
         // Reply to the join block from this worker - Send the response from 'Elizabeth'
@@ -296,66 +307,66 @@ fork {
     }
 }
 
-record{http:Response? miramar; http:Response? aqueen; http:Response? elizabeth;} hotelResponses =
+record {http:Response? miramar; http:Response? aqueen; http:Response? elizabeth;} hotelResponses =
         wait{miramar, aqueen, elizabeth};
 
-    // Wait until the responses received from all the workers running in parallel
-    int miramarDistance = -1;
-    int aqueenDistance = -1;
-    int elizabethDistance = -1;
+// Wait until the responses received from all the workers running in parallel
+int miramarDistance = -1;
+int aqueenDistance = -1;
+int elizabethDistance = -1;
 
-    // Get the response and distance to the preferred location from the hotel 'Miramar'
-    var responseMiramar = hotelResponses["miramar"];
-    if (responseMiramar is http:Response) {
-        var mirmarPayload = responseMiramar.getJsonPayload();
-        if (mirmarPayload is json) {
-            miramarJsonResponse = mirmarPayload;
-            var miramarDistanceResult = miramarJsonResponse.DistanceToLocation;
-            if (miramarDistanceResult is int) {
-                miramarDistance = miramarDistanceResult;
-            }
+// Get the response and distance to the preferred location from the hotel 'Miramar'
+var responseMiramar = hotelResponses["miramar"];
+if (responseMiramar is http:Response) {
+    var mirmarPayload = responseMiramar.getJsonPayload();
+    if (mirmarPayload is json) {
+        miramarJsonResponse = mirmarPayload;
+        var miramarDistanceResult = miramarJsonResponse.DistanceToLocation;
+        if (miramarDistanceResult is int) {
+            miramarDistance = miramarDistanceResult;
         }
     }
+}
 
-    // Get the response and distance to the preferred location from the hotel 'Aqueen'
-    var responseAqueen = hotelResponses["aqueen"];
-    if (responseAqueen is http:Response) {
-        var aqueenPayload = responseMiramar.getJsonPayload();
-        if (aqueenPayload is json) {
-            aqueenJsonResponse = aqueenPayload;
-            var aqueenDistanceResult = aqueenJsonResponse.DistanceToLocation;
-            if (aqueenDistanceResult is int) {
-                aqueenDistance = aqueenDistanceResult;
-            }
+// Get the response and distance to the preferred location from the hotel 'Aqueen'
+var responseAqueen = hotelResponses["aqueen"];
+if (responseAqueen is http:Response) {
+    var aqueenPayload = responseAqueen.getJsonPayload();
+    if (aqueenPayload is json) {
+        aqueenJsonResponse = aqueenPayload;
+        var aqueenDistanceResult = aqueenJsonResponse.DistanceToLocation;
+        if (aqueenDistanceResult is int) {
+            aqueenDistance = aqueenDistanceResult;
         }
     }
+}
 
-    // Get the response and distance to the preferred location from the hotel 'Elizabeth'
-    var responseElizabeth = hotelResponses["elizabeth"];
-    if (responseElizabeth is http:Response) {
-        var elizabethPayload = responseMiramar.getJsonPayload();
-        if (elizabethPayload is json) {
-            elizabethJsonResponse = elizabethPayload;
-            var elizabethDistanceResult = elizabethJsonResponse.DistanceToLocation;
-            if (elizabethDistanceResult is int) {
-                elizabethDistance = elizabethDistanceResult;
-            }
+// Get the response and distance to the preferred location from the hotel 'Elizabeth'
+var responseElizabeth = hotelResponses["elizabeth"];
+if (responseElizabeth is http:Response) {
+    var elizabethPayload = responseElizabeth.getJsonPayload();
+    if (elizabethPayload is json) {
+        elizabethJsonResponse = elizabethPayload;
+        var elizabethDistanceResult = elizabethJsonResponse.DistanceToLocation;
+        if (elizabethDistanceResult is int) {
+            elizabethDistance = elizabethDistanceResult;
         }
     }
+}
 
-    // Select the hotel with the lowest distance
-    if (miramarDistance < aqueenDistance) {
-        if (miramarDistance < elizabethDistance) {
-            jsonHotelResponse = miramarJsonResponse;
-        }
-    } else {
-        if (aqueenDistance < elizabethDistance) {
-            jsonHotelResponse = aqueenJsonResponse;
-        }
-        else {
-            jsonHotelResponse = elizabethJsonResponse;
-        }
+// Select the hotel with the lowest distance
+if (miramarDistance < aqueenDistance) {
+    if (miramarDistance < elizabethDistance) {
+        jsonHotelResponse = miramarJsonResponse;
     }
+} else {
+    if (aqueenDistance < elizabethDistance) {
+        jsonHotelResponse = aqueenJsonResponse;
+    }
+    else {
+        jsonHotelResponse = elizabethJsonResponse;
+    }
+}
 ```
 
 Let's next look at how the travel agency service integrates with the car rental service. The travel agency service sends requests to all three car rental providers in parallel and gets only the first one to respond. Refer to the following code snippet.
@@ -369,7 +380,7 @@ fork {
     worker driveSg returns http:Response? {
         http:Request outReq = new;
         // Out request payload
-        outReq.setJsonPayload(untaint vehiclePayload);
+        outReq.setJsonPayload(<@untainted>vehiclePayload);
         // Send a POST request to 'DriveSg' and get the results
         var respWorkerDriveSg = carRentalEP->post("/driveSg", outReq);
         // Reply to the join block from this worker - Send the response from 'DriveSg'
@@ -383,11 +394,11 @@ fork {
     worker dreamCar returns http:Response? {
         http:Request outReq = new;
         // Out request payload
-        outReq.setJsonPayload(untaint vehiclePayload);
+        outReq.setJsonPayload(<@untainted>vehiclePayload);
         // Send a POST request to 'DreamCar' and get the results
         var respWorkerDreamCar = carRentalEP->post("/dreamCar", outReq);
         if (respWorkerDreamCar is http:Response) {
-        // Reply to the join block from this worker - Send the response from 'DreamCar'
+            // Reply to the join block from this worker - Send the response from 'DreamCar'
             return respWorkerDreamCar;
         }
         return;
@@ -397,7 +408,7 @@ fork {
     worker sixt returns http:Response? {
         http:Request outReq = new;
         // Out request payload
-        outReq.setJsonPayload(untaint vehiclePayload);
+        outReq.setJsonPayload(<@untainted>vehiclePayload);
         // Send a POST request to 'Sixt' and get the results
         var respWorkerSixt = carRentalEP->post("/sixt", outReq);
         // Reply to the join block from this worker - Send the response from 'Sixt'
@@ -427,24 +438,28 @@ Finally, let's look at the structure of the `travel_agency_service_parallel.bal`
 import ballerina/http;
 
 // Service endpoint
-listener http:Listener travelAgencyEP  = new(9090);
+listener http:Listener travelAgencyEP = new (9090);
 
 // Client endpoint to communicate with Airline reservation service
-http:Client airlineEP = new("http://localhost:9091/airline");
+http:Client airlineEP = new ("http://localhost:9091/airline");
 
 // Client endpoint to communicate with Hotel reservation service
-http:Client hotelEP = new("http://localhost:9092/hotel");
+http:Client hotelEP = new ("http://localhost:9092/hotel");
 
 // Client endpoint to communicate with Car rental service
-http:Client carRentalEP = new("http://localhost:9093/car");
+http:Client carRentalEP = new ("http://localhost:9093/car");
 
 // Travel agency service to arrange a complete tour for a user
-@http:ServiceConfig { basePath: "/travel" }
+@http:ServiceConfig {basePath: "/travel"}
 service travelAgencyService on travelAgencyEP {
+
     // Resource to arrange a tour
-    @http:ResourceConfig {methods:["POST"], consumes:["application/json"],
-        produces:["application/json"]}
-    resource function arrangeTour (http:Caller caller, http:Request inRequest) {
+    @http:ResourceConfig {
+        methods: ["POST"],
+        consumes: ["application/json"],
+        produces: ["application/json"]
+    }
+    resource function arrangeTour(http:Caller caller, http:Request inRequest) returns error? {
 
         // Try parsing the JSON payload from the user request
 
