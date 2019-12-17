@@ -14,22 +14,22 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/http;
+import ballerina/test;
 
 // Common request Payload
 json requestPayload = {
-    "ArrivalDate":"12-03-2018",
-    "DepartureDate":"13-04-2018",
-    "VehicleType":"Car"
+    "ArrivalDate": "12-03-2018",
+    "DepartureDate": "13-04-2018",
+    "VehicleType": "Car"
 };
 
 // Client endpoint
-http:Client clientEP  = new("http://localhost:9093/car");
+http:Client clientEP = new ("http://localhost:9093/car");
 
 // Function to test resource 'driveSg'
-@test:Config
-function testResourceDriveSg () {
+@test:Config {}
+function testResourceDriveSg() {
     // Initialize the empty http requests and responses
     http:Request req = new;
 
@@ -55,8 +55,8 @@ function testResourceDriveSg () {
 }
 
 // Function to test resource 'dreamCar'
-@test:Config
-function testResourceDreamCar () {
+@test:Config {}
+function testResourceDreamCar() {
     // Initialize the empty http requests and responses
     http:Request req = new;
 
@@ -82,8 +82,8 @@ function testResourceDreamCar () {
 }
 
 // Function to test resource 'sixt'
-@test:Config
-function testResourceSixt () {
+@test:Config {}
+function testResourceSixt() {
     // Initialize the empty http requests and responses
     http:Request req = new;
 

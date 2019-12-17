@@ -14,23 +14,23 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/test;
 import ballerina/http;
+import ballerina/test;
 
 // Common request Payload
 json requestPayload = {
-    "ArrivalDate":"12-03-2018",
-    "DepartureDate":"13-04-2018",
-    "From":"Colombo",
-    "To":"Changi"
+    "ArrivalDate": "12-03-2018",
+    "DepartureDate": "13-04-2018",
+    "From": "Colombo",
+    "To": "Changi"
 };
 
 // Client endpoint
-http:Client clientEP = new("http://localhost:9091/airline");
+http:Client clientEP = new ("http://localhost:9091/airline");
 
 // Function to test resource 'flightConcord'
-@test:Config
-function testResourceFlightConcord () {
+@test:Config {}
+function testResourceFlightConcord() {
     // Initialize the empty http requests and responses
     http:Request req = new;
 
@@ -41,10 +41,10 @@ function testResourceFlightConcord () {
     if (response is http:Response) {
         // Expected response code is 200
         test:assertEquals(response.statusCode, 200,
-            msg = "Airline reservation service did not respond with 200 OK signal!");
+        msg = "Airline reservation service did not respond with 200 OK signal!");
         // Check whether the response is as expected
         string expected = "{\"Airline\":\"Qatar Airways\", \"ArrivalDate\":\"12-03-2018\"," +
-            " \"ReturnDate\":\"13-04-2018\", \"From\":\"Colombo\", \"To\":\"Changi\", \"Price\":278}";
+        " \"ReturnDate\":\"13-04-2018\", \"From\":\"Colombo\", \"To\":\"Changi\", \"Price\":278}";
         var resPayload = response.getJsonPayload();
         if (resPayload is json) {
             test:assertEquals(resPayload.toString(), expected, msg = "Response mismatch!");
@@ -57,8 +57,8 @@ function testResourceFlightConcord () {
 }
 
 // Function to test resource 'flightAsiana'
-@test:Config
-function testResourceFlightAsiana () {
+@test:Config {}
+function testResourceFlightAsiana() {
     // Initialize the empty http requests and responses
     http:Request req = new;
 
@@ -69,7 +69,7 @@ function testResourceFlightAsiana () {
     if (response is http:Response) {
         // Expected response code is 200
         test:assertEquals(response.statusCode, 200,
-            msg = "Airline reservation service did not respond with 200 OK signal!");
+        msg = "Airline reservation service did not respond with 200 OK signal!");
         // Check whether the response is as expected
         string expected = "{\"Airline\":\"Asiana\", \"ArrivalDate\":\"12-03-2018\", \"ReturnDate\":\"13-04-2018\", " +
             "\"From\":\"Colombo\", \"To\":\"Changi\", \"Price\":275}";
@@ -85,8 +85,8 @@ function testResourceFlightAsiana () {
 }
 
 // Function to test resource 'flightEmirates'
-@test:Config
-function testResourceFlightEmirates () {
+@test:Config {}
+function testResourceFlightEmirates() {
     // Initialize the empty http requests and responses
     http:Request req = new;
 

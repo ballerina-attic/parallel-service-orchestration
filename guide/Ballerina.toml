@@ -1,0 +1,5 @@
+[project]
+org-name= "parallel-service-orchestration"
+version= "0.1.0"
+
+[dependencies]
